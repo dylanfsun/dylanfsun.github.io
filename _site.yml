@@ -7,5 +7,7 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
-    - text: "Test Notebook"
+    - text: "Notebook"
       href: test_notebook.nb.html
+    - text: "Markdown"
+      href: test_markdown.html
