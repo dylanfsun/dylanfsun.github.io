@@ -9,11 +9,9 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Dylan Sun" />
 
-<meta name="date" content="2016-07-21" />
 
-<title>test markdown</title>
+<title>R Notebook</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -205,34 +203,28 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">test markdown</h1>
-<h4 class="author"><em>Dylan Sun</em></h4>
-<h4 class="date"><em>July 21, 2016</em></h4>
+<h1 class="title toc-ignore">R Notebook</h1>
 
 </div>
 
 
-<div id="test-edit" class="section level2">
-<h2>Test edit</h2>
+<div id="section-1" class="section level1">
+<h1>Section 1</h1>
+<p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a> Notebook. When you execute code within the notebook, the results appear beneath the code.</p>
+<p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Cmd+Shift+Enter</em>.</p>
+<pre class="r"><code>plot(cars)</code></pre>
+<p><img src="test_notebook_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Cmd+Option+I</em>.</p>
+<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Cmd+Shift+K</em> to preview the HTML file).</p>
 </div>
-<div id="r-markdown" class="section level2">
-<h2>R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<pre class="r"><code>summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
+<div id="comments-on-differences" class="section level1">
+<h1>Comments on differences</h1>
+<p>It seems like the main difference between the notebook and markdown is that the notebook continuously generates .html updates after saving that can be viewed at any time, whereas the markdown must be compiled at the end with knit. Another difference maybe is that all plots and stuff will be automatically generated when you compile the markdown, whereas in the notebok you have to produce the plot inside the actual notebook for it to show up. There’s probably an option to change this. It seems to display only the most recent chunk output</p>
 </div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="test_markdown_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div id="test-two-plots" class="section level1">
+<h1>Test two plots</h1>
+<pre class="r"><code>plot(cars)</code></pre>
+<p><img src="test_notebook_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 </div>
 
 <p>I don't have a Copyright &copy; 2016 :( All rights reserved.</p>
