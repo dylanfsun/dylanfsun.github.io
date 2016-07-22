@@ -9,5 +9,14 @@ navbar:
       href: about.html
     - text: "Notebook"
       href: test_notebook.nb.html
-    - text: "Markdown"
+    - text: "Markdown"  
       href: test_markdown.html
+  right:
+    - text: "Repository"
+      href: https://github.com/dylanfsun/dylanfsun.github.io
+output:
+  html_document:
+    theme: cerulean
+    highlight: textmate
+    include:
+      after_body: footer.html

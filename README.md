@@ -11,3 +11,4 @@
   * To edit individual pages, just knit the .Rmd when you're done (or directly edit the notebook and just save)
 
 I followed instructions found [here](http://rmarkdown.rstudio.com/rmarkdown_websites.html).
+Markdown instructions are found [here](http://rmarkdown.rstudio.com/html_document_format.html)
