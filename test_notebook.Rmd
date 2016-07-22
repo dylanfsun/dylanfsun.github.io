@@ -28,4 +28,13 @@ It seems like the main difference between the notebook and markdown is that the 
 
 
 # third header
-## subheader
+### subheader
+
+# test json
+```{r}
+library(jsonlite)
+"/Users/dsun/Google Drive/Takeout/Takeout 2/Chrome/BrowserHistory.json"
+fromJSON("/Users/dsun/Google Drive/Takeout/Takeout 2/Chrome/BrowserHistory.json")
+```
+
+
