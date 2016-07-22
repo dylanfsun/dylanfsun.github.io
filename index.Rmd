@@ -1,7 +1,6 @@
 ---
 title: "My Website"
 ---
-
 Hello, Website!
 
 Link to repository: [repository](https://github.com/dylanfsun/dylanfsun.github.io)
