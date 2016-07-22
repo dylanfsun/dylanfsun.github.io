@@ -5,18 +5,18 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "About"
-      href: about.html
     - text: "Notebook"
       href: test_notebook.nb.html
     - text: "Markdown"  
       href: test_markdown.html
+    - text: "About"
+      href: about.html
   right:
-    - text: "Repository"
+    - text: "Code Repository"
       href: https://github.com/dylanfsun/dylanfsun.github.io
 output:
   html_document:
-    theme: cerulean
+    theme: flatly
     highlight: textmate
     include:
       after_body: footer.html
