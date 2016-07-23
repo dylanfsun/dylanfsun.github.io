@@ -1,31 +1,17 @@
 ---
-title: "R Notebook"
+title: "Browser History Graph"
+author: "Dylan Sun"
+date: "July 23, 2016"
 output: 
-  html_notebook:
+  html_document:
     toc: true
     toc_float: true
-    theme: flatly
-    highlight: textmate
-    include:
-      after_body: footer.html
+    code_folding: hide
 ---
 
-# Section 1
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
-```{r}
-plot(cars)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, results = "hide")
 ```
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
-
-# notes on differences
-It seems like the main difference between the notebook and markdown is that the notebook continuously generates .html updates after saving that can be viewed at any time, whereas the markdown must be compiled at the end with knit. Another difference maybe is that all plots and stuff will be automatically generated when you compile the markdown, whereas in the notebok you have to produce the plot inside the actual notebook for it to show up. There's probably an option to change this. It seems to display only the most recent chunk output
-
 
 # Browser history graph
 ## Load browsing history data
@@ -56,23 +42,17 @@ q = 5L
 line.graph.data = dt[, .(count=.N), by = c("year","month","host")][order(year,month,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c("year","month")]
 line.graph.data[, month_year := as.yearmon(paste(month, year, sep="-"), "%m-%Y")]
 setorder(line.graph.data, month_year)
+```
+```{r, results = "markup"}
 head(line.graph.data)
-
 ```
 
 ### Produce line graph
 Used [this website](http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/) as a reference for producing this graph.
-```{r}
+```{r browser_history_line_graph}
 library(ggplot2)
 ggplot(data=line.graph.data, aes(x=month_year, y=count, group=host, color=host, label=host)) +
     geom_line() +
     geom_point() +
-    theme(legend.position="top")
+    theme(legend.position="bottom")
 ```
-
-
-
-
-
-
-

@@ -5,8 +5,8 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Notebook"
-      href: test_notebook.nb.html
+    - text: "Stories"
+      href: browser_history_graph.html
     - text: "Markdown"  
       href: test_markdown.html
     - text: "About"

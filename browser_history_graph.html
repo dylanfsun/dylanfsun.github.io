@@ -11,9 +11,9 @@
 
 <meta name="author" content="Dylan Sun" />
 
-<meta name="date" content="2016-07-21" />
+<meta name="date" content="2016-07-23" />
 
-<title>test markdown</title>
+<title>Browser History Graph</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
@@ -316,38 +316,61 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">test markdown</h1>
+<h1 class="title toc-ignore">Browser History Graph</h1>
 <h4 class="author"><em>Dylan Sun</em></h4>
-<h4 class="date"><em>July 21, 2016</em></h4>
+<h4 class="date"><em>July 23, 2016</em></h4>
 
 </div>
 
 
-<div id="test-edit" class="section level2">
-<h2>Test edit</h2>
+<div id="browser-history-graph" class="section level1">
+<h1>Browser history graph</h1>
+<div id="load-browsing-history-data" class="section level2">
+<h2>Load browsing history data</h2>
+<pre class="r"><code>library(jsonlite)
+library(data.table)
+bhistory &lt;- fromJSON(&quot;/Users/dsun/Google Drive/Takeout/Takeout 2/Chrome/BrowserHistory.json&quot;)
+dt &lt;- data.table(bhistory)
+rm(bhistory)</code></pre>
 </div>
-<div id="r-markdown" class="section level2">
-<h2>R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<pre class="r"><code>summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
+<div id="format-browser-history" class="section level2">
+<h2>Format browser history</h2>
+<pre class="r"><code>url.regex = &quot;^https?://([^/]+)/(.*)$&quot;
+dt[, date_time := as.POSIXct(time_usec/1000000, tz = &quot;EST&quot;, origin = &quot;1970-01-01&quot;)]
+dt[, month := as.numeric(format(date_time, &quot;%m&quot;))]
+dt[, year := as.numeric(format(date_time, &quot;%Y&quot;))]
+dt[, host := gsub(url.regex, &quot;\\1&quot;, url)]</code></pre>
 </div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="test_markdown_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div id="line-graph" class="section level2">
+<h2>Line graph</h2>
+<div id="prep-data-for-line-graph" class="section level3">
+<h3>Prep data for line graph</h3>
+<p>We want a table with the top q most visited sites (determined by counting instances of the host name) for each year-month.</p>
+<pre class="r"><code>library(zoo)
+q = 5L
+line.graph.data = dt[, .(count=.N), by = c(&quot;year&quot;,&quot;month&quot;,&quot;host&quot;)][order(year,month,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c(&quot;year&quot;,&quot;month&quot;)]
+line.graph.data[, month_year := as.yearmon(paste(month, year, sep=&quot;-&quot;), &quot;%m-%Y&quot;)]
+setorder(line.graph.data, month_year)</code></pre>
+<pre class="r"><code>head(line.graph.data)</code></pre>
+<pre><code>##    year month             host count month_year
+## 1: 2015     9   www.reddit.com  1694   Sep 2015
+## 2: 2015     9  mail.google.com  1479   Sep 2015
+## 3: 2015     9   www.google.com  1423   Sep 2015
+## 4: 2015     9  www.youtube.com  1035   Sep 2015
+## 5: 2015     9 ctools.umich.edu   933   Sep 2015
+## 6: 2015    10   www.reddit.com  2319   Oct 2015</code></pre>
 </div>
-<div id="notes-on-differences" class="section level2">
-<h2>notes on differences</h2>
-<p>It seems like the main difference between the notebook and markdown is that the notebook continuously generates .html updates after saving that can be viewed at any time, whereas the markdown must be compiled at the end with knit. Another difference maybe is that all plots and stuff will be automatically generated when you compile the markdown, whereas in the notebok you have to produce the plot inside the actual notebook for it to show up. There’s probably an option to change this. It seems to display only the most recent chunk output</p>
+<div id="produce-line-graph" class="section level3">
+<h3>Produce line graph</h3>
+<p>Used <a href="http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/">this website</a> as a reference for producing this graph.</p>
+<pre class="r"><code>library(ggplot2)
+ggplot(data=line.graph.data, aes(x=month_year, y=count, group=host, color=host, label=host)) +
+    geom_line() +
+    geom_point() +
+    theme(legend.position=&quot;bottom&quot;)</code></pre>
+<p><img src="browser_history_graph_files/figure-html/browser_history_line_graph-1.png" width="672" /></p>
+</div>
+</div>
 </div>
 
 <p>I don't have a Copyright &copy; 2016 :( All rights reserved.</p>

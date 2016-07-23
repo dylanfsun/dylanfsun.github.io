@@ -3,35 +3,4 @@ title: "My Website"
 ---
 Hello, Website!
 
-
-
-```{r, message=FALSE, warning=FALSE, include=FALSE}
-library(jsonlite)
-library(data.table)
-library(zoo)
-library(ggplot2)
-
-bhistory <- fromJSON("/Users/dsun/Google Drive/Takeout/Takeout 2/Chrome/BrowserHistory.json")
-dt <- data.table(bhistory)
-rm(bhistory)
-
-url.regex = "^https?://([^/]+)/(.*)$"
-dt[, date_time := as.POSIXct(time_usec/1000000, tz = "EST", origin = "1970-01-01")]
-dt[, month := as.numeric(format(date_time, "%m"))]
-dt[, year := as.numeric(format(date_time, "%Y"))]
-dt[, host := gsub(url.regex, "\\1", url)]
-
-
-q = 5L
-line.graph.data = dt[, .(count=.N), by = c("year","month","host")][order(year,month,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c("year","month")]
-line.graph.data[, month_year := as.yearmon(paste(month, year, sep="-"), "%m-%Y")]
-setorder(line.graph.data, month_year)
-head(line.graph.data)
-```
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(data=line.graph.data, aes(x=month_year, y=count, group=host, color=host, label=host)) +
-    geom_line() +
-    geom_point() +
-    theme(legend.position="top")
-```
+![test](browser_history_graph_files/figure-html/browser_history_line_graph-1.png)
