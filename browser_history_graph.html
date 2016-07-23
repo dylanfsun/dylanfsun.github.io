@@ -167,7 +167,7 @@ $(document).ready(function () {
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <script>
 $(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
+  window.initializeCodeFolding("show" === "show");
 });
 </script>
 
@@ -323,8 +323,6 @@ div.tocify {
 </div>
 
 
-<div id="browser-history-graph" class="section level1">
-<h1>Browser history graph</h1>
 <div id="load-browsing-history-data" class="section level2">
 <h2>Load browsing history data</h2>
 <pre class="r"><code>library(jsonlite)
@@ -369,7 +367,6 @@ ggplot(data=line.graph.data, aes(x=month_year, y=count, group=host, color=host, 
     geom_point() +
     theme(legend.position=&quot;bottom&quot;)</code></pre>
 <p><img src="browser_history_graph_files/figure-html/browser_history_line_graph-1.png" width="672" /></p>
-</div>
 </div>
 </div>
 
