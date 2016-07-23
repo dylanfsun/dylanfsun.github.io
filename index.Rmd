@@ -3,4 +3,4 @@ title: "My Website"
 ---
 Hello, Website!
 
-![test](browser_history_graph_files/figure-html/browser_history_line_graph-1.png)
+![tfw I don't actually read very much manga but each click on a manga site counts as a visit](browser_history_graph_files/figure-html/browser_history_line_graph-1.png)

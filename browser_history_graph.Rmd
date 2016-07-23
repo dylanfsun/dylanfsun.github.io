@@ -28,7 +28,7 @@ rm(bhistory)
 url.regex = "^https?://([^/]+)/(.*)$"
 dt[, date_time := as.POSIXct(time_usec/1000000, tz = "EST", origin = "1970-01-01")]
 dt[, month := as.numeric(format(date_time, "%m"))]
-dt[, year := as.numeric(format(date_time, "%Y"))]
+dt[, year := as.numeric(format(date_time, "%y"))]
 dt[, host := gsub(url.regex, "\\1", url)]
 ```
 
@@ -39,8 +39,7 @@ We want a table with the top q most visited sites (determined by counting instan
 library(zoo)
 q = 5L
 line.graph.data = dt[, .(count=.N), by = c("year","month","host")][order(year,month,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c("year","month")]
-line.graph.data[, month_year := as.yearmon(paste(month, year, sep="-"), "%m-%Y")]
-setorder(line.graph.data, month_year)
+line.graph.data[, month_year := as.yearmon(paste(month, year, sep="-"), "%m-%y")]
 ```
 ```{r, results = "markup"}
 head(line.graph.data)
@@ -50,8 +49,9 @@ head(line.graph.data)
 Used [this website](http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/) as a reference for producing this graph.
 ```{r browser_history_line_graph}
 library(ggplot2)
-ggplot(data=line.graph.data, aes(x=month_year, y=count, group=host, color=host, label=host)) +
+ggplot(data=line.graph.data, aes(x=factor(month_year, labels = unique(format(month_year, "%m-%y"))), y=count, group=host, color=host, label=host)) +
     geom_line() +
     geom_point() +
-    theme(legend.position="bottom")
+    labs(y = "Visits", x = "Month") + 
+    ggtitle("This is what I do apparently")
 ```
