@@ -5,4 +5,6 @@ output: html_document
 
 ![Manga sites dominate because each page counts as a visit](browser_history_graph_files/figure-html/browser_history_line_graph-1.png)
 
+
+After sorting only visits to websites that are manually typed in:
 ![Only typed visits](browser_history_graph_files/figure-html/typed_browser_history_line_graph-1.png)
