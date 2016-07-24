@@ -25,21 +25,22 @@ rm(bhistory)
 
 ## Format browser history
 ```{r}
+library(zoo)
 url.regex = "^https?://([^/]+)/(.*)$"
 dt[, date_time := as.POSIXct(time_usec/1000000, tz = "EST", origin = "1970-01-01")]
 dt[, month := as.numeric(format(date_time, "%m"))]
 dt[, year := as.numeric(format(date_time, "%y"))]
 dt[, host := gsub(url.regex, "\\1", url)]
+dt[, month_year := as.yearmon(paste(month, year, sep="-"), "%m-%y")]
 ```
 
 ## Line graph
 ### Prep data for line graph
-We want a table with the top q most visited sites (determined by counting instances of the host name) for each year-month.
+We want a table with the top q most visited sites (determined by counting instances of the host name) for each year-month. The package zoo is used to create "yearmon" objects (that have an inherent order) since the R date object requires a day. 
 ```{r}
 library(zoo)
 q = 5L
-line.graph.data = dt[, .(count=.N), by = c("year","month","host")][order(year,month,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c("year","month")]
-line.graph.data[, month_year := as.yearmon(paste(month, year, sep="-"), "%m-%y")]
+line.graph.data = dt[, .(count=.N), by = c("month_year","host")][order(month_year,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c("month_year")]
 ```
 ```{r, results = "markup"}
 head(line.graph.data)
@@ -55,3 +56,25 @@ ggplot(data=line.graph.data, aes(x=factor(month_year, labels = unique(format(mon
     labs(y = "Visits", x = "Month") + 
     ggtitle("This is what I do all day apparently")
 ```
+
+## Only typed visits
+Manga sites appear to dominate; however, this is mostly because each click counts as a visit and not because I spend every waking moment looking through them. If you look only at visits with a "TYPED" page transition (manually entered in?) then the graph looks different (ie slightly less embarrassing).
+
+### Prep data
+```{r}
+q = 5L # number of top hosts to show
+line.graph.data.typed = dt[page_transition == "TYPED", .(count=.N), by = c("month_year","host")][order(month_year,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c("month_year")]
+
+```
+```{r, results = "markup"}
+head(line.graph.data.typed)
+```
+```{r typed_browser_history_line_graph}
+library(ggplot2)
+ggplot(data=line.graph.data.typed, aes(x=factor(month_year, labels = unique(format(month_year, "%m-%y"))), y=count, group=host, color=host, label=host)) +
+    geom_line() +
+    geom_point() +
+    labs(y = "Visits", x = "Month") + 
+    ggtitle("This is what I actually do all day")
+```
+

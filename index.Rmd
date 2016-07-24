@@ -3,4 +3,6 @@ title: "Welcome to my website I guess"
 output: html_document
 ---
 
-![tfw I don't actually read very much manga but each click on a manga site counts as a visit](browser_history_graph_files/figure-html/browser_history_line_graph-1.png)
+![Manga sites dominate because each page counts as a visit](browser_history_graph_files/figure-html/browser_history_line_graph-1.png)
+
+![Only typed visits](browser_browser_history_graph_files/figure-html/typed_browser_history_line_graph-1.png)
