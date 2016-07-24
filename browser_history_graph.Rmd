@@ -53,5 +53,5 @@ ggplot(data=line.graph.data, aes(x=factor(month_year, labels = unique(format(mon
     geom_line() +
     geom_point() +
     labs(y = "Visits", x = "Month") + 
-    ggtitle("This is what I do apparently")
+    ggtitle("This is what I do all day apparently")
 ```
