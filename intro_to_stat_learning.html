@@ -11,9 +11,9 @@
 
 <meta name="author" content="Dylan Sun" />
 
-<meta name="date" content="2016-07-23" />
+<meta name="date" content="2016-07-24" />
 
-<title>Browser History Graph</title>
+<title>Introduction to Statistical Learning</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
@@ -316,82 +316,66 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Browser History Graph</h1>
+<h1 class="title toc-ignore">Introduction to Statistical Learning</h1>
 <h4 class="author"><em>Dylan Sun</em></h4>
-<h4 class="date"><em>July 23, 2016</em></h4>
+<h4 class="date"><em>July 24, 2016</em></h4>
 
 </div>
 
 
-<div id="load-browsing-history-data" class="section level2">
-<h2>Load browsing history data</h2>
-<pre class="r"><code>library(jsonlite)
+<p>Alright let’s see if I can make it through an entire textbook on my own. The textbook <a href="http://www-bcf.usc.edu/~gareth/ISL/">Introduction to Statistical Learning</a> is geared towards people that are not necessarily from a mathematical background and somehow contains no matrix algebra. It is lite version of <a href="http://statweb.stanford.edu/~tibs/ElemStatLearn/">Elements of Statistical Learning</a>, which is a more mathematically rigorous approach to the same topics and is written by the same authors. The goal of the intro version of the book is to emphasize practical application and computation in R over the mathematical aspects.</p>
+<div id="loading-in-data" class="section level1">
+<h1>Loading in data</h1>
+<p>Data for the labs in the book are contained in the ISLR and MASS packages. A list is available on page 14.</p>
+<pre class="r"><code>library(ISLR)
+library(MASS)
 library(data.table)
-bhistory &lt;- fromJSON(&quot;/Users/dsun/Google Drive/Takeout/Takeout 2/Chrome/BrowserHistory.json&quot;)
-dt &lt;- data.table(bhistory)
-rm(bhistory)</code></pre>
+library(ggplot2)
+library(reshape2)</code></pre>
 </div>
-<div id="format-browser-history" class="section level2">
-<h2>Format browser history</h2>
-<pre class="r"><code>library(zoo)
-url.regex = &quot;^https?://([^/]+)/(.*)$&quot;
-dt[, date_time := as.POSIXct(time_usec/1000000, tz = &quot;EST&quot;, origin = &quot;1970-01-01&quot;)]
-dt[, month := as.numeric(format(date_time, &quot;%m&quot;))]
-dt[, year := as.numeric(format(date_time, &quot;%y&quot;))]
-dt[, host := gsub(url.regex, &quot;\\1&quot;, url)]
-dt[, month_year := as.yearmon(paste(month, year, sep=&quot;-&quot;), &quot;%m-%y&quot;)]</code></pre>
+<div id="exercises-and-maybe-labs" class="section level1">
+<h1>Exercises and maybe labs</h1>
+<div id="chapter-2" class="section level2">
+<h2>Chapter 2</h2>
+<div id="section" class="section level3">
+<h3>#8</h3>
+<pre class="r"><code>View(College)
+college = data.table(College)
+college[, name := row.names(College)]
+college[, elite := (Top10perc &gt; 50)]</code></pre>
+<pre class="r"><code>head(college)</code></pre>
+<pre><code>##    Private Apps Accept Enroll Top10perc Top25perc F.Undergrad P.Undergrad
+## 1:     Yes 1660   1232    721        23        52        2885         537
+## 2:     Yes 2186   1924    512        16        29        2683        1227
+## 3:     Yes 1428   1097    336        22        50        1036          99
+## 4:     Yes  417    349    137        60        89         510          63
+## 5:     Yes  193    146     55        16        44         249         869
+## 6:     Yes  587    479    158        38        62         678          41
+##    Outstate Room.Board Books Personal PhD Terminal S.F.Ratio perc.alumni
+## 1:     7440       3300   450     2200  70       78      18.1          12
+## 2:    12280       6450   750     1500  29       30      12.2          16
+## 3:    11250       3750   400     1165  53       66      12.9          30
+## 4:    12960       5450   450      875  92       97       7.7          37
+## 5:     7560       4120   800     1500  76       72      11.9           2
+## 6:    13500       3335   500      675  67       73       9.4          11
+##    Expend Grad.Rate                         name elite
+## 1:   7041        60 Abilene Christian University FALSE
+## 2:  10527        56           Adelphi University FALSE
+## 3:   8735        54               Adrian College FALSE
+## 4:  19016        59          Agnes Scott College  TRUE
+## 5:  10922        15    Alaska Pacific University FALSE
+## 6:   9727        55            Albertson College FALSE</code></pre>
+<pre class="r"><code>college[, sum(elite)]</code></pre>
+<pre><code>## [1] 78</code></pre>
+<pre class="r"><code>rm(college)</code></pre>
 </div>
-<div id="line-graph" class="section level2">
-<h2>Line graph</h2>
-<div id="prep-data-for-line-graph" class="section level3">
-<h3>Prep data for line graph</h3>
-<p>We want a table with the top q most visited sites (determined by counting instances of the host name) for each year-month. The package zoo is used to create “yearmon” objects (that have an inherent order) since the R date object requires a day.</p>
-<pre class="r"><code>library(zoo)
-q = 5L
-line.graph.data = dt[, .(count=.N), by = c(&quot;month_year&quot;,&quot;host&quot;)][order(month_year,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c(&quot;month_year&quot;)]</code></pre>
-<pre class="r"><code>head(line.graph.data)</code></pre>
-<pre><code>##    month_year             host count
-## 1:   Sep 2015   www.reddit.com  1694
-## 2:   Sep 2015  mail.google.com  1479
-## 3:   Sep 2015   www.google.com  1423
-## 4:   Sep 2015  www.youtube.com  1035
-## 5:   Sep 2015 ctools.umich.edu   933
-## 6:   Oct 2015   www.reddit.com  2319</code></pre>
+<div id="section-1" class="section level3">
+<h3>#9</h3>
+<pre class="r"><code>auto = data.table(Auto)
+View(auto)
+qplot(x=Var1, y=Var2, data=melt(cor(auto[, !&quot;name&quot;, with=FALSE])), fill=value, geom=&quot;tile&quot;)</code></pre>
+<p><img src="intro_to_stat_learning_files/figure-html/unnamed-chunk-4-1.png" width="672" /> It looks like basically everything would be useful in predicting mpg, with cylinders, displacement, horsepower, and weight being the most useful.</p>
 </div>
-<div id="produce-line-graph" class="section level3">
-<h3>Produce line graph</h3>
-<p>Used <a href="http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/">this website</a> as a reference for producing this graph.</p>
-<pre class="r"><code>library(ggplot2)
-ggplot(data=line.graph.data, aes(x=factor(month_year, labels = unique(format(month_year, &quot;%m-%y&quot;))), y=count, group=host, color=host, label=host)) +
-    geom_line() +
-    geom_point() +
-    labs(y = &quot;Visits&quot;, x = &quot;Month&quot;) + 
-    ggtitle(&quot;This is what I do all day apparently&quot;)</code></pre>
-<p><img src="browser_history_graph_files/figure-html/browser_history_line_graph-1.png" width="672" /></p>
-</div>
-</div>
-<div id="only-typed-visits" class="section level2">
-<h2>Only typed visits</h2>
-<p>Manga sites appear to dominate; however, this is mostly because each click counts as a visit and not because I spend every waking moment looking through them. If you look only at visits with a “TYPED” page transition (manually entered in?) then the graph looks different (ie slightly less embarrassing).</p>
-<div id="prep-data" class="section level3">
-<h3>Prep data</h3>
-<pre class="r"><code>q = 5L # number of top hosts to show
-line.graph.data.typed = dt[page_transition == &quot;TYPED&quot;, .(count=.N), by = c(&quot;month_year&quot;,&quot;host&quot;)][order(month_year,-count)][, lapply(.SD, function(x) head(x, n=q)), by = c(&quot;month_year&quot;)]</code></pre>
-<pre class="r"><code>head(line.graph.data.typed)</code></pre>
-<pre><code>##    month_year             host count
-## 1:   Sep 2015 chrome://newtab/   709
-## 2:   Sep 2015   www.reddit.com   296
-## 3:   Sep 2015    www.twitch.tv   220
-## 4:   Sep 2015  www.youtube.com   195
-## 5:   Sep 2015   www.google.com   178
-## 6:   Oct 2015 chrome://newtab/   705</code></pre>
-<pre class="r"><code>library(ggplot2)
-ggplot(data=line.graph.data.typed, aes(x=factor(month_year, labels = unique(format(month_year, &quot;%m-%y&quot;))), y=count, group=host, color=host, label=host)) +
-    geom_line() +
-    geom_point() +
-    labs(y = &quot;Visits&quot;, x = &quot;Month&quot;) + 
-    ggtitle(&quot;This is what I actually do all day&quot;)</code></pre>
-<p><img src="browser_history_graph_files/figure-html/typed_browser_history_line_graph-1.png" width="672" /></p>
 </div>
 </div>
 

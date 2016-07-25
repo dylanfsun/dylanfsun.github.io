@@ -7,8 +7,8 @@ navbar:
       href: index.html
     - text: "Stories"
       href: browser_history_graph.html
-    - text: "Markdown"  
-      href: test_markdown.html
+    - text: "Reading"
+      href: intro_to_stat_learning.html
     - text: "About"
       href: about.html
   right:

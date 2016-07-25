@@ -1,0 +1,54 @@
+---
+title: "Introduction to Statistical Learning"
+author: "Dylan Sun"
+date: "July 24, 2016"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, results = "hide")
+```
+Alright let's see if I can make it through an entire textbook on my own. The textbook [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) is geared towards people that are not necessarily from a mathematical background and somehow contains no matrix algebra. It is lite version of [Elements of Statistical Learning](http://statweb.stanford.edu/~tibs/ElemStatLearn/), which is a more mathematically rigorous approach to the same topics and is written by the same authors. The goal of the intro version of the book is to emphasize practical application and computation in R over the mathematical aspects. 
+
+# Loading in data
+Data for the labs in the book are contained in the ISLR and MASS packages. A list is available on page 14.
+```{r}
+library(ISLR)
+library(MASS)
+library(data.table)
+library(ggplot2)
+library(reshape2)
+```
+
+
+# Exercises and maybe labs
+
+## Chapter 2
+
+### \#8
+```{r}
+View(College)
+college = data.table(College)
+college[, name := row.names(College)]
+college[, elite := (Top10perc > 50)]
+```
+
+```{r, results='markup'}
+head(college)
+college[, sum(elite)]
+rm(college)
+```
+
+### \#9
+```{r, results='markup'}
+auto = data.table(Auto)
+View(auto)
+qplot(x=Var1, y=Var2, data=melt(cor(auto[, !"name", with=FALSE])), fill=value, geom="tile")
+```
+It looks like basically everything would be useful in predicting mpg, with cylinders, displacement, horsepower, and weight being the most useful.
+
+
