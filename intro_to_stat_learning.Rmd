@@ -12,7 +12,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, results = "hide")
 ```
-OKay let's see if I can make it through an entire textbook on my own x.x
+This page contains scrap work produced as a result of reading "Introduction to Statistical Learning."
 
 The textbook [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) is geared towards people that are not necessarily from a mathematical background, and somehow contains no matrix algebra. It is the lite version of [Elements of Statistical Learning](http://statweb.stanford.edu/~tibs/ElemStatLearn/), which is a more mathematically rigorous approach to the same topics and is written by the same authors. The goal of the intro version of the book is to emphasize practical application and computation in R over the mathematical aspects. 
 
@@ -27,7 +27,7 @@ library(reshape2)
 ```
 
 
-# Exercises and maybe labs
+# Some exercises and maybe labs
 
 ## Chapter 2
 
@@ -51,5 +51,90 @@ qplot(x=Var1, y=Var2, data=melt(cor(auto[, !"name", with=FALSE])), fill=value, g
 rm(auto)
 ```
 It looks like basically everything would be useful in predicting mpg, with cylinders, displacement, horsepower, and weight being the most useful.
+
+
+## Chapter 3: Linear regression
+### \#3
+```{r}
+library(ggplot2)
+b0 <- 50
+b1 <- 20
+b2 <- 0.07
+b3 <- 35
+b4 <- 0.01
+b5 <- -10
+x2 <- 120
+x3 <- c(0,1)
+earnings <- function(x1, x2) {
+  y <- b0 + b1*x1 + b2*x2 + b3*x3 + b4*x1*x2 + b5*x1*x3
+  return(y)
+}
+for (gpa in 0:4) {
+  print(earnings(gpa, 120))
+}
+earnings(4,110)
+```
+
+### \#8
+```{r}
+auto = data.table(Auto)
+reg <- lm(mpg ~ horsepower, data = auto)
+summary(reg)
+predict(reg, data.table(horsepower = 98), interval = "confidence")
+predict(reg, data.table(horsepower = 98), interval = "prediction")
+```
+Yes there is a strong, negative relationship between the predictor and response. 
+
+```{r}
+ggplot(auto, aes(x = horsepower, y = mpg)) +
+  geom_point(shape = 1) +
+  geom_smooth(method = lm)
+```
+```{r}
+par(mfrow=c(2,2)) 
+plot(reg)
+```
+### \#9
+
+```{r}
+auto <- data.table(Auto)
+```
+
+
+
+## Chapter 4: Logistic regression
+```{r}
+smarket <- data.table(Smarket)
+```
+```{r, results="markup"}
+head(smarket)
+```
+```{r, results="markup"}
+cor(smarket[, -c("Direction"), with=F])
+```
+
+```{r, results="markup"}
+glm.fit <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, data = smarket, family = binomial)
+summary(glm.fit)
+library(broom)
+tidy(glm.fit)
+head(augment(glm.fit, type.predict = "response"))
+glance(glm.fit)
+contrasts(smarket$Direction)
+glm.pred <- data.table(augment(glm.fit, type.predict = "response"))
+glm.pred[.fitted > 0.5, train_predict := "Up"]
+glm.pred[.fitted <= 0.5, train_predict := "Down"]
+table(glm.pred[, train_predict], smarket$Direction)
+```
+```{r}
+train <- smarket[Year < 2005]
+test <- smarket[Year >= 2005]
+glm.fit <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, data = train, family = binomial)
+glm.probs <- predict(glm.fit, test, type = "response")
+glm.pred <- rep("Down", dim(test)[1])
+glm.pred[glm.probs > 0.5] <- "Up"
+table(glm.pred, test$Direction)
+```
+
 
 

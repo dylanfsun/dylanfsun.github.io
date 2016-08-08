@@ -1,0 +1,139 @@
+---
+title: "Reformatting Data"
+author: "Dylan Sun"
+date: "August 1, 2016"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, results = "markup")
+```
+
+Learning to clean data with tidyr using the [tutorial](https://blog.rstudio.org/2014/07/22/introducing-tidyr/)
+```{r}
+library(tidyr)
+library(dplyr)
+```
+
+## Example 1
+```{r}
+messy <- data.frame(
+  name = c("Wilbur", "Petunia", "Gregory"),
+  a = c(67, 80, 64),
+  b = c(56, 90, 50)
+)
+messy
+```
+
+```{r}
+messy %>% gather(drug, heartrate, a:b)
+messy %>% gather(drug, heartrate, a, b)
+```
+## Example 2
+```{r}
+set.seed(10)
+messy <- data.frame(
+  id = 1:4,
+  trt = sample(rep(c('control', 'treatment'), each = 2)),
+  work.T1 = runif(4),
+  home.T1 = runif(4),
+  work.T2 = runif(4),
+  home.T2 = runif(4)
+)
+messy
+```
+```{r}
+tidier <- messy %>%
+  gather(key, time, -id, -trt)
+tidier
+```
+## Example 3
+```{r}
+dadmom <- foreign::read.dta("http://www.ats.ucla.edu/stat/stata/modules/dadmomw.dta")
+dadmom
+```
+```{r}
+dadmom %>%
+  gather(key, value, named:incm)
+```
+
+```{r}
+dadmom %>%
+  gather(key, value, named:incm) %>%
+  separate(key, c("variable", "type"), -2)
+```
+
+```{r}
+dadmom %>%
+  gather(key, value, named:incm) %>%
+  separate(key, c("variable", "type"), -2) %>%
+  spread(variable, value, convert = TRUE)
+```
+
+## Example 4
+```{r}
+df <- data.frame(x = c(NA, "a-b", "a-d", "b-c", "d-e"))
+df
+```
+```{r}
+df %>% extract(x, "A")
+```
+
+```{r}
+df %>% extract(x, c("A", "B"), "([[:alnum:]])-([[:alnum:]])")
+```
+```{r}
+# If no match, NA:
+df %>% extract(x, c("A", "B"), "([a-d])-([a-d])")
+```
+
+## Example 5
+
+```{r}
+grades <- tbl_df(read.table(header = TRUE, text = "
+    ID   Test Year   Fall Spring Winter
+     1   1   2008    15      16      19
+     1   1   2009    12      13      27
+     1   2   2008    22      22      24
+     1   2   2009    10      14      20
+     2   1   2008    12      13      25
+     2   1   2009    16      14      21
+     2   2   2008    13      11      29
+     2   2   2009    23      20      26
+     3   1   2008    11      12      22
+     3   1   2009    13      11      27
+     3   2   2008    17      12      23
+     3   2   2009    14      9       31
+ "))
+```
+
+```{r}
+grades %>%
+   gather(Semester, Score, Fall:Winter)
+```
+```{r}
+grades %>%
+   gather(Semester, Score, Fall:Winter) %>%
+   mutate(Test = paste0("Test", Test))
+```
+
+```{r}
+grades %>%
+   gather(Semester, Score, Fall:Winter) %>%
+   mutate(Test = paste0("Test", Test)) %>%
+   spread(Test, Score)
+```
+
+```{r}
+grades %>%
+   gather(Semester, Score, Fall:Winter) %>%
+   mutate(Test = paste0("Test", Test)) %>%
+   spread(Test, Score) %>%
+   arrange(ID, Year, Semester)
+```
+
+

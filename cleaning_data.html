@@ -11,9 +11,8 @@
 
 <meta name="author" content="Dylan Sun" />
 
-<meta name="date" content="2016-07-24" />
 
-<title>Introduction to Statistical Learning</title>
+<title>Reformatting Data</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
@@ -316,120 +315,102 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Introduction to Statistical Learning</h1>
+<h1 class="title toc-ignore">Reformatting Data</h1>
 <h4 class="author"><em>Dylan Sun</em></h4>
-<h4 class="date"><em>July 24, 2016</em></h4>
+<h4 class="date"><em>August 1, 2016</em></h4>
 
 </div>
 
 
-<p>OKay let’s see if I can make it through an entire textbook on my own x.x</p>
-<p>The textbook <a href="http://www-bcf.usc.edu/~gareth/ISL/">Introduction to Statistical Learning</a> is geared towards people that are not necessarily from a mathematical background, and somehow contains no matrix algebra. It is the lite version of <a href="http://statweb.stanford.edu/~tibs/ElemStatLearn/">Elements of Statistical Learning</a>, which is a more mathematically rigorous approach to the same topics and is written by the same authors. The goal of the intro version of the book is to emphasize practical application and computation in R over the mathematical aspects.</p>
-<div id="loading-in-data-and-packages" class="section level1">
-<h1>Loading in data and packages</h1>
-<p>Data for the labs in the book are contained in the ISLR and MASS packages. A list is available on page 14.</p>
-<pre class="r"><code>library(ISLR)
-library(MASS)
-library(data.table)
-library(ggplot2)
-library(reshape2)</code></pre>
+<p>Learning to clean data with tidyr using the <a href="https://blog.rstudio.org/2014/07/22/introducing-tidyr/">tutorial</a></p>
+<pre class="r"><code>library(tidyr)
+library(dplyr)</code></pre>
+<div id="example-1" class="section level2">
+<h2>Example 1</h2>
+<pre class="r"><code>messy &lt;- data.frame(
+  name = c(&quot;Wilbur&quot;, &quot;Petunia&quot;, &quot;Gregory&quot;),
+  a = c(67, 80, 64),
+  b = c(56, 90, 50)
+)
+messy</code></pre>
+<pre><code>##      name  a  b
+## 1  Wilbur 67 56
+## 2 Petunia 80 90
+## 3 Gregory 64 50</code></pre>
+<pre class="r"><code>messy %&gt;% gather(drug, heartrate, a:b)</code></pre>
+<pre><code>##      name drug heartrate
+## 1  Wilbur    a        67
+## 2 Petunia    a        80
+## 3 Gregory    a        64
+## 4  Wilbur    b        56
+## 5 Petunia    b        90
+## 6 Gregory    b        50</code></pre>
+<pre class="r"><code>messy %&gt;% gather(drug, heartrate, a, b)</code></pre>
+<pre><code>##      name drug heartrate
+## 1  Wilbur    a        67
+## 2 Petunia    a        80
+## 3 Gregory    a        64
+## 4  Wilbur    b        56
+## 5 Petunia    b        90
+## 6 Gregory    b        50</code></pre>
 </div>
-<div id="exercises-and-maybe-labs" class="section level1">
-<h1>Exercises and maybe labs</h1>
-<div id="chapter-2" class="section level2">
-<h2>Chapter 2</h2>
-<div id="section" class="section level3">
-<h3>#8</h3>
-<pre class="r"><code>college = data.table(College)
-college[, name := row.names(College)]
-college[, elite := (Top10perc &gt; 50)]</code></pre>
-<pre class="r"><code>head(college)</code></pre>
-<pre><code>##    Private Apps Accept Enroll Top10perc Top25perc F.Undergrad P.Undergrad
-## 1:     Yes 1660   1232    721        23        52        2885         537
-## 2:     Yes 2186   1924    512        16        29        2683        1227
-## 3:     Yes 1428   1097    336        22        50        1036          99
-## 4:     Yes  417    349    137        60        89         510          63
-## 5:     Yes  193    146     55        16        44         249         869
-## 6:     Yes  587    479    158        38        62         678          41
-##    Outstate Room.Board Books Personal PhD Terminal S.F.Ratio perc.alumni
-## 1:     7440       3300   450     2200  70       78      18.1          12
-## 2:    12280       6450   750     1500  29       30      12.2          16
-## 3:    11250       3750   400     1165  53       66      12.9          30
-## 4:    12960       5450   450      875  92       97       7.7          37
-## 5:     7560       4120   800     1500  76       72      11.9           2
-## 6:    13500       3335   500      675  67       73       9.4          11
-##    Expend Grad.Rate                         name elite
-## 1:   7041        60 Abilene Christian University FALSE
-## 2:  10527        56           Adelphi University FALSE
-## 3:   8735        54               Adrian College FALSE
-## 4:  19016        59          Agnes Scott College  TRUE
-## 5:  10922        15    Alaska Pacific University FALSE
-## 6:   9727        55            Albertson College FALSE</code></pre>
-<pre class="r"><code>college[, sum(elite)]</code></pre>
-<pre><code>## [1] 78</code></pre>
-<pre class="r"><code>rm(college)</code></pre>
+<div id="example-2" class="section level2">
+<h2>Example 2</h2>
+<pre class="r"><code>set.seed(10)
+messy &lt;- data.frame(
+  id = 1:4,
+  trt = sample(rep(c(&#39;control&#39;, &#39;treatment&#39;), each = 2)),
+  work.T1 = runif(4),
+  home.T1 = runif(4),
+  work.T2 = runif(4),
+  home.T2 = runif(4)
+)
+messy</code></pre>
+<pre><code>##   id       trt    work.T1   home.T1   work.T2    home.T2
+## 1  1 treatment 0.08513597 0.6158293 0.1135090 0.05190332
+## 2  2   control 0.22543662 0.4296715 0.5959253 0.26417767
+## 3  3 treatment 0.27453052 0.6516557 0.3580500 0.39879073
+## 4  4   control 0.27230507 0.5677378 0.4288094 0.83613414</code></pre>
+<pre class="r"><code>tidier &lt;- messy %&gt;%
+  gather(key, time, -id, -trt)
+tidier</code></pre>
+<pre><code>##    id       trt     key       time
+## 1   1 treatment work.T1 0.08513597
+## 2   2   control work.T1 0.22543662
+## 3   3 treatment work.T1 0.27453052
+## 4   4   control work.T1 0.27230507
+## 5   1 treatment home.T1 0.61582931
+## 6   2   control home.T1 0.42967153
+## 7   3 treatment home.T1 0.65165567
+## 8   4   control home.T1 0.56773775
+## 9   1 treatment work.T2 0.11350898
+## 10  2   control work.T2 0.59592531
+## 11  3 treatment work.T2 0.35804998
+## 12  4   control work.T2 0.42880942
+## 13  1 treatment home.T2 0.05190332
+## 14  2   control home.T2 0.26417767
+## 15  3 treatment home.T2 0.39879073
+## 16  4   control home.T2 0.83613414</code></pre>
 </div>
-<div id="section-1" class="section level3">
-<h3>#9</h3>
-<pre class="r"><code>auto = data.table(Auto)
-qplot(x=Var1, y=Var2, data=melt(cor(auto[, !&quot;name&quot;, with=FALSE])), fill=value, geom=&quot;tile&quot;)</code></pre>
-<p><img src="intro_to_stat_learning_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre class="r"><code>rm(auto)</code></pre>
-<p>It looks like basically everything would be useful in predicting mpg, with cylinders, displacement, horsepower, and weight being the most useful.</p>
-</div>
-</div>
-<div id="chapter-3-linear-regression" class="section level2">
-<h2>Chapter 3: Linear regression</h2>
-<div id="section-2" class="section level3">
-<h3>#3</h3>
-<pre class="r"><code>library(ggplot2)
-b0 &lt;- 50
-b1 &lt;- 20
-b2 &lt;- 0.07
-b3 &lt;- 35
-b4 &lt;- 0.01
-b5 &lt;- -10
-x2 &lt;- 120
-x3 &lt;- c(0,1)
-earnings &lt;- function(x1, x2) {
-  y &lt;- b0 + b1*x1 + b2*x2 + b3*x3 + b4*x1*x2 + b5*x1*x3
-  return(y)
-}
-for (gpa in 0:4) {
-  print(earnings(gpa, 120))
-}
-earnings(4,110)</code></pre>
-</div>
-<div id="section-3" class="section level3">
-<h3>#8</h3>
-<pre class="r"><code>auto = data.table(Auto)
-reg &lt;- lm(mpg ~ horsepower, data = auto)
-summary(reg)
-predict(reg, data.table(horsepower = 98), interval = &quot;confidence&quot;)
-predict(reg, data.table(horsepower = 98), interval = &quot;prediction&quot;)</code></pre>
-<p>Yes there is a strong, negative relationship between the predictor and response.</p>
-<pre class="r"><code>ggplot(auto, aes(x = horsepower, y = mpg)) +
-  geom_point(shape = 1) +
-  geom_smooth(method = lm)</code></pre>
-<p><img src="intro_to_stat_learning_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<pre class="r"><code>par(mfrow=c(2,2)) 
-plot(reg)</code></pre>
-<p><img src="intro_to_stat_learning_files/figure-html/unnamed-chunk-8-1.png" width="672" /> ### #9</p>
-<pre class="r"><code>auto &lt;- data.table(Auto)</code></pre>
-</div>
-</div>
-<div id="chapter-4-logistic-regression" class="section level2">
-<h2>Chapter 4: Logistic regression</h2>
-<pre class="r"><code>smarket &lt;- data.table(Smarket)</code></pre>
-<pre class="r"><code>head(smarket)</code></pre>
-<pre><code>##    Year   Lag1   Lag2   Lag3   Lag4   Lag5 Volume  Today Direction
-## 1: 2001  0.381 -0.192 -2.624 -1.055  5.010 1.1913  0.959        Up
-## 2: 2001  0.959  0.381 -0.192 -2.624 -1.055 1.2965  1.032        Up
-## 3: 2001  1.032  0.959  0.381 -0.192 -2.624 1.4112 -0.623      Down
-## 4: 2001 -0.623  1.032  0.959  0.381 -0.192 1.2760  0.614        Up
-## 5: 2001  0.614 -0.623  1.032  0.959  0.381 1.2057  0.213        Up
-## 6: 2001  0.213  0.614 -0.623  1.032  0.959 1.3491  1.392        Up</code></pre>
-</div>
+<div id="example-3" class="section level2">
+<h2>Example 3</h2>
+<pre class="r"><code>dadmom &lt;- foreign::read.dta(&quot;http://www.ats.ucla.edu/stat/stata/modules/dadmomw.dta&quot;)
+dadmom</code></pre>
+<pre><code>##   famid named  incd namem  incm
+## 1     1  Bill 30000  Bess 15000
+## 2     2   Art 22000   Amy 18000
+## 3     3  Paul 25000   Pat 50000</code></pre>
+<pre class="r"><code>dadmom %&gt;%
+  gather(key, value, named:incm) %&gt;%
+  separate(key, c(&quot;variable&quot;, &quot;type&quot;), -2) %&gt;%
+  spread(variable, value, convert = TRUE)</code></pre>
+<pre><code>##   famid type   inc name
+## 1     1    d 30000 Bill
+## 2     1    m 15000 Bess
+## 3     2    d 22000  Art
+## 4     2    m 18000  Amy
+## 5     3    d 25000 Paul
+## 6     3    m 50000  Pat</code></pre>
 </div>
 
 <p>I don't have a copyright :( &copy; 2016 :( All rights reserved?</p>
