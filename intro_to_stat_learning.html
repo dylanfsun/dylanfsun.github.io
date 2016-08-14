@@ -323,7 +323,7 @@ div.tocify {
 </div>
 
 
-<p>OKay let’s see if I can make it through an entire textbook on my own x.x</p>
+<p>This page contains scrap work produced as a result of reading “Introduction to Statistical Learning.”</p>
 <p>The textbook <a href="http://www-bcf.usc.edu/~gareth/ISL/">Introduction to Statistical Learning</a> is geared towards people that are not necessarily from a mathematical background, and somehow contains no matrix algebra. It is the lite version of <a href="http://statweb.stanford.edu/~tibs/ElemStatLearn/">Elements of Statistical Learning</a>, which is a more mathematically rigorous approach to the same topics and is written by the same authors. The goal of the intro version of the book is to emphasize practical application and computation in R over the mathematical aspects.</p>
 <div id="loading-in-data-and-packages" class="section level1">
 <h1>Loading in data and packages</h1>
@@ -334,8 +334,8 @@ library(data.table)
 library(ggplot2)
 library(reshape2)</code></pre>
 </div>
-<div id="exercises-and-maybe-labs" class="section level1">
-<h1>Exercises and maybe labs</h1>
+<div id="some-exercises-and-maybe-labs" class="section level1">
+<h1>Some exercises and maybe labs</h1>
 <div id="chapter-2" class="section level2">
 <h2>Chapter 2</h2>
 <div id="section" class="section level3">
@@ -429,6 +429,172 @@ plot(reg)</code></pre>
 ## 4: 2001 -0.623  1.032  0.959  0.381 -0.192 1.2760  0.614        Up
 ## 5: 2001  0.614 -0.623  1.032  0.959  0.381 1.2057  0.213        Up
 ## 6: 2001  0.213  0.614 -0.623  1.032  0.959 1.3491  1.392        Up</code></pre>
+<pre class="r"><code>cor(smarket[, -c(&quot;Direction&quot;), with=F])</code></pre>
+<pre><code>##              Year         Lag1         Lag2         Lag3         Lag4
+## Year   1.00000000  0.029699649  0.030596422  0.033194581  0.035688718
+## Lag1   0.02969965  1.000000000 -0.026294328 -0.010803402 -0.002985911
+## Lag2   0.03059642 -0.026294328  1.000000000 -0.025896670 -0.010853533
+## Lag3   0.03319458 -0.010803402 -0.025896670  1.000000000 -0.024051036
+## Lag4   0.03568872 -0.002985911 -0.010853533 -0.024051036  1.000000000
+## Lag5   0.02978799 -0.005674606 -0.003557949 -0.018808338 -0.027083641
+## Volume 0.53900647  0.040909908 -0.043383215 -0.041823686 -0.048414246
+## Today  0.03009523 -0.026155045 -0.010250033 -0.002447647 -0.006899527
+##                Lag5      Volume        Today
+## Year    0.029787995  0.53900647  0.030095229
+## Lag1   -0.005674606  0.04090991 -0.026155045
+## Lag2   -0.003557949 -0.04338321 -0.010250033
+## Lag3   -0.018808338 -0.04182369 -0.002447647
+## Lag4   -0.027083641 -0.04841425 -0.006899527
+## Lag5    1.000000000 -0.02200231 -0.034860083
+## Volume -0.022002315  1.00000000  0.014591823
+## Today  -0.034860083  0.01459182  1.000000000</code></pre>
+<pre class="r"><code>glm.fit &lt;- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, data = smarket, family = binomial)
+summary(glm.fit)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + 
+##     Volume, family = binomial, data = smarket)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -1.446  -1.203   1.065   1.145   1.326  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -0.126000   0.240736  -0.523    0.601
+## Lag1        -0.073074   0.050167  -1.457    0.145
+## Lag2        -0.042301   0.050086  -0.845    0.398
+## Lag3         0.011085   0.049939   0.222    0.824
+## Lag4         0.009359   0.049974   0.187    0.851
+## Lag5         0.010313   0.049511   0.208    0.835
+## Volume       0.135441   0.158360   0.855    0.392
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1731.2  on 1249  degrees of freedom
+## Residual deviance: 1727.6  on 1243  degrees of freedom
+## AIC: 1741.6
+## 
+## Number of Fisher Scoring iterations: 3</code></pre>
+<pre class="r"><code>library(broom)
+tidy(glm.fit)</code></pre>
+<pre><code>##          term     estimate  std.error  statistic   p.value
+## 1 (Intercept) -0.126000257 0.24073574 -0.5233966 0.6006983
+## 2        Lag1 -0.073073746 0.05016739 -1.4565986 0.1452272
+## 3        Lag2 -0.042301344 0.05008605 -0.8445733 0.3983491
+## 4        Lag3  0.011085108 0.04993854  0.2219750 0.8243333
+## 5        Lag4  0.009358938 0.04997413  0.1872757 0.8514445
+## 6        Lag5  0.010313068 0.04951146  0.2082966 0.8349974
+## 7      Volume  0.135440659 0.15835970  0.8552723 0.3924004</code></pre>
+<pre class="r"><code>head(augment(glm.fit, type.predict = &quot;response&quot;))</code></pre>
+<pre><code>##   Direction   Lag1   Lag2   Lag3   Lag4   Lag5 Volume   .fitted    .se.fit
+## 1        Up  0.381 -0.192 -2.624 -1.055  5.010 1.1913 0.5070841 0.07318447
+## 2        Up  0.959  0.381 -0.192 -2.624 -1.055 1.2965 0.4814679 0.04153081
+## 3      Down  1.032  0.959  0.381 -0.192 -2.624 1.4112 0.4811388 0.04005380
+## 4        Up -0.623  1.032  0.959  0.381 -0.192 1.2760 0.5152224 0.02530565
+## 5        Up  0.614 -0.623  1.032  0.959  0.381 1.2057 0.5107812 0.02751167
+## 6        Up  0.213  0.614 -0.623  1.032  0.959 1.3491 0.5069565 0.02548582
+##      .resid        .hat   .sigma      .cooksd .std.resid
+## 1  1.165400 0.021428172 1.178920 0.0031073806   1.178090
+## 2  1.209062 0.006908744 1.178891 0.0010777824   1.213261
+## 3 -1.145530 0.006426395 1.178943 0.0008623598  -1.149228
+## 4  1.151657 0.002563882 1.178940 0.0003463999   1.153136
+## 5  1.159150 0.003028976 1.178934 0.0004169664   1.160909
+## 6  1.165616 0.002598611 1.178929 0.0003629259   1.167133</code></pre>
+<pre class="r"><code>glance(glm.fit)</code></pre>
+<pre><code>##   null.deviance df.null   logLik      AIC    BIC deviance df.residual
+## 1      1731.175    1249 -863.792 1741.584 1777.5 1727.584        1243</code></pre>
+<pre class="r"><code>contrasts(smarket$Direction)</code></pre>
+<pre><code>##      Up
+## Down  0
+## Up    1</code></pre>
+<pre class="r"><code>glm.pred &lt;- data.table(augment(glm.fit, type.predict = &quot;response&quot;))
+glm.pred[.fitted &gt; 0.5, train_predict := &quot;Up&quot;]</code></pre>
+<pre><code>##       Direction   Lag1   Lag2   Lag3   Lag4   Lag5  Volume   .fitted
+##    1:        Up  0.381 -0.192 -2.624 -1.055  5.010 1.19130 0.5070841
+##    2:        Up  0.959  0.381 -0.192 -2.624 -1.055 1.29650 0.4814679
+##    3:      Down  1.032  0.959  0.381 -0.192 -2.624 1.41120 0.4811388
+##    4:        Up -0.623  1.032  0.959  0.381 -0.192 1.27600 0.5152224
+##    5:        Up  0.614 -0.623  1.032  0.959  0.381 1.20570 0.5107812
+##   ---                                                               
+## 1246:        Up  0.422  0.252 -0.024 -0.584 -0.285 1.88850 0.5198924
+## 1247:      Down  0.043  0.422  0.252 -0.024 -0.584 1.28581 0.5059256
+## 1248:        Up -0.955  0.043  0.422  0.252 -0.024 1.54047 0.5392683
+## 1249:      Down  0.130 -0.955  0.043  0.422  0.252 1.42236 0.5261183
+## 1250:      Down -0.298  0.130 -0.955  0.043  0.422 1.38254 0.5179166
+##          .se.fit    .resid        .hat   .sigma      .cooksd .std.resid
+##    1: 0.07318447  1.165400 0.021428172 1.178920 0.0031073806   1.178090
+##    2: 0.04153081  1.209062 0.006908744 1.178891 0.0010777824   1.213261
+##    3: 0.04005380 -1.145530 0.006426395 1.178943 0.0008623598  -1.149228
+##    4: 0.02530565  1.151657 0.002563882 1.178940 0.0003463999   1.153136
+##    5: 0.02751167  1.159150 0.003028976 1.178934 0.0004169664   1.160909
+##   ---                                                                  
+## 1246: 0.02346319  1.143795 0.002205581 1.178946 0.0002922591   1.145058
+## 1247: 0.01860636 -1.187492 0.001384981 1.178912 0.0002031627  -1.188316
+## 1248: 0.01972976  1.111343 0.001566731 1.178971 0.0001918234   1.112215
+## 1249: 0.01965758 -1.222127 0.001549917 1.178883 0.0002465876  -1.223075
+## 1250: 0.01995897 -1.208005 0.001595493 1.178895 0.0002456526  -1.208970
+##       train_predict
+##    1:            Up
+##    2:            NA
+##    3:            NA
+##    4:            Up
+##    5:            Up
+##   ---              
+## 1246:            Up
+## 1247:            Up
+## 1248:            Up
+## 1249:            Up
+## 1250:            Up</code></pre>
+<pre class="r"><code>glm.pred[.fitted &lt;= 0.5, train_predict := &quot;Down&quot;]</code></pre>
+<pre><code>##       Direction   Lag1   Lag2   Lag3   Lag4   Lag5  Volume   .fitted
+##    1:        Up  0.381 -0.192 -2.624 -1.055  5.010 1.19130 0.5070841
+##    2:        Up  0.959  0.381 -0.192 -2.624 -1.055 1.29650 0.4814679
+##    3:      Down  1.032  0.959  0.381 -0.192 -2.624 1.41120 0.4811388
+##    4:        Up -0.623  1.032  0.959  0.381 -0.192 1.27600 0.5152224
+##    5:        Up  0.614 -0.623  1.032  0.959  0.381 1.20570 0.5107812
+##   ---                                                               
+## 1246:        Up  0.422  0.252 -0.024 -0.584 -0.285 1.88850 0.5198924
+## 1247:      Down  0.043  0.422  0.252 -0.024 -0.584 1.28581 0.5059256
+## 1248:        Up -0.955  0.043  0.422  0.252 -0.024 1.54047 0.5392683
+## 1249:      Down  0.130 -0.955  0.043  0.422  0.252 1.42236 0.5261183
+## 1250:      Down -0.298  0.130 -0.955  0.043  0.422 1.38254 0.5179166
+##          .se.fit    .resid        .hat   .sigma      .cooksd .std.resid
+##    1: 0.07318447  1.165400 0.021428172 1.178920 0.0031073806   1.178090
+##    2: 0.04153081  1.209062 0.006908744 1.178891 0.0010777824   1.213261
+##    3: 0.04005380 -1.145530 0.006426395 1.178943 0.0008623598  -1.149228
+##    4: 0.02530565  1.151657 0.002563882 1.178940 0.0003463999   1.153136
+##    5: 0.02751167  1.159150 0.003028976 1.178934 0.0004169664   1.160909
+##   ---                                                                  
+## 1246: 0.02346319  1.143795 0.002205581 1.178946 0.0002922591   1.145058
+## 1247: 0.01860636 -1.187492 0.001384981 1.178912 0.0002031627  -1.188316
+## 1248: 0.01972976  1.111343 0.001566731 1.178971 0.0001918234   1.112215
+## 1249: 0.01965758 -1.222127 0.001549917 1.178883 0.0002465876  -1.223075
+## 1250: 0.01995897 -1.208005 0.001595493 1.178895 0.0002456526  -1.208970
+##       train_predict
+##    1:            Up
+##    2:          Down
+##    3:          Down
+##    4:            Up
+##    5:            Up
+##   ---              
+## 1246:            Up
+## 1247:            Up
+## 1248:            Up
+## 1249:            Up
+## 1250:            Up</code></pre>
+<pre class="r"><code>table(glm.pred[, train_predict], smarket$Direction)</code></pre>
+<pre><code>##       
+##        Down  Up
+##   Down  145 141
+##   Up    457 507</code></pre>
+<pre class="r"><code>train &lt;- smarket[Year &lt; 2005]
+test &lt;- smarket[Year &gt;= 2005]
+glm.fit &lt;- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, data = train, family = binomial)
+glm.probs &lt;- predict(glm.fit, test, type = &quot;response&quot;)
+glm.pred &lt;- rep(&quot;Down&quot;, dim(test)[1])
+glm.pred[glm.probs &gt; 0.5] &lt;- &quot;Up&quot;
+table(glm.pred, test$Direction)</code></pre>
 </div>
 </div>
 
