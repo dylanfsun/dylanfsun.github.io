@@ -11,6 +11,8 @@ navbar:
       href: intro_to_stat_learning.html
     - text: "About"
       href: about.html
+    - text: "Test Page"
+      hred: test_interactive_plots.html
   right:
     - text: "Code Repository"
       href: https://github.com/dylanfsun/dylanfsun.github.io
