@@ -291,6 +291,9 @@ div.tocify {
   <a href="intro_to_stat_learning.html">Reading</a>
 </li>
 <li>
+  <a href="test_interactive_plots.html">Test</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
       </ul>
@@ -401,6 +404,37 @@ dadmom</code></pre>
 ## 2     2   Art 22000   Amy 18000
 ## 3     3  Paul 25000   Pat 50000</code></pre>
 <pre class="r"><code>dadmom %&gt;%
+  gather(key, value, named:incm)</code></pre>
+<pre><code>##    famid   key value
+## 1      1 named  Bill
+## 2      2 named   Art
+## 3      3 named  Paul
+## 4      1  incd 30000
+## 5      2  incd 22000
+## 6      3  incd 25000
+## 7      1 namem  Bess
+## 8      2 namem   Amy
+## 9      3 namem   Pat
+## 10     1  incm 15000
+## 11     2  incm 18000
+## 12     3  incm 50000</code></pre>
+<pre class="r"><code>dadmom %&gt;%
+  gather(key, value, named:incm) %&gt;%
+  separate(key, c(&quot;variable&quot;, &quot;type&quot;), -2)</code></pre>
+<pre><code>##    famid variable type value
+## 1      1     name    d  Bill
+## 2      2     name    d   Art
+## 3      3     name    d  Paul
+## 4      1      inc    d 30000
+## 5      2      inc    d 22000
+## 6      3      inc    d 25000
+## 7      1     name    m  Bess
+## 8      2     name    m   Amy
+## 9      3     name    m   Pat
+## 10     1      inc    m 15000
+## 11     2      inc    m 18000
+## 12     3      inc    m 50000</code></pre>
+<pre class="r"><code>dadmom %&gt;%
   gather(key, value, named:incm) %&gt;%
   separate(key, c(&quot;variable&quot;, &quot;type&quot;), -2) %&gt;%
   spread(variable, value, convert = TRUE)</code></pre>
@@ -411,6 +445,141 @@ dadmom</code></pre>
 ## 4     2    m 18000  Amy
 ## 5     3    d 25000 Paul
 ## 6     3    m 50000  Pat</code></pre>
+</div>
+<div id="example-4" class="section level2">
+<h2>Example 4</h2>
+<pre class="r"><code>df &lt;- data.frame(x = c(NA, &quot;a-b&quot;, &quot;a-d&quot;, &quot;b-c&quot;, &quot;d-e&quot;))
+df</code></pre>
+<pre><code>##      x
+## 1 &lt;NA&gt;
+## 2  a-b
+## 3  a-d
+## 4  b-c
+## 5  d-e</code></pre>
+<pre class="r"><code>df %&gt;% extract(x, &quot;A&quot;)</code></pre>
+<pre><code>##      A
+## 1 &lt;NA&gt;
+## 2    a
+## 3    a
+## 4    b
+## 5    d</code></pre>
+<pre class="r"><code>df %&gt;% extract(x, c(&quot;A&quot;, &quot;B&quot;), &quot;([[:alnum:]])-([[:alnum:]])&quot;)</code></pre>
+<pre><code>##      A    B
+## 1 &lt;NA&gt; &lt;NA&gt;
+## 2    a    b
+## 3    a    d
+## 4    b    c
+## 5    d    e</code></pre>
+<pre class="r"><code># If no match, NA:
+df %&gt;% extract(x, c(&quot;A&quot;, &quot;B&quot;), &quot;([a-d])-([a-d])&quot;)</code></pre>
+<pre><code>##      A    B
+## 1 &lt;NA&gt; &lt;NA&gt;
+## 2    a    b
+## 3    a    d
+## 4    b    c
+## 5 &lt;NA&gt; &lt;NA&gt;</code></pre>
+</div>
+<div id="example-5" class="section level2">
+<h2>Example 5</h2>
+<pre class="r"><code>grades &lt;- tbl_df(read.table(header = TRUE, text = &quot;
+    ID   Test Year   Fall Spring Winter
+     1   1   2008    15      16      19
+     1   1   2009    12      13      27
+     1   2   2008    22      22      24
+     1   2   2009    10      14      20
+     2   1   2008    12      13      25
+     2   1   2009    16      14      21
+     2   2   2008    13      11      29
+     2   2   2009    23      20      26
+     3   1   2008    11      12      22
+     3   1   2009    13      11      27
+     3   2   2008    17      12      23
+     3   2   2009    14      9       31
+ &quot;))</code></pre>
+<pre class="r"><code>grades %&gt;%
+   gather(Semester, Score, Fall:Winter)</code></pre>
+<pre><code>## # A tibble: 36 x 5
+##       ID  Test  Year Semester Score
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;chr&gt; &lt;int&gt;
+## 1      1     1  2008     Fall    15
+## 2      1     1  2009     Fall    12
+## 3      1     2  2008     Fall    22
+## 4      1     2  2009     Fall    10
+## 5      2     1  2008     Fall    12
+## 6      2     1  2009     Fall    16
+## 7      2     2  2008     Fall    13
+## 8      2     2  2009     Fall    23
+## 9      3     1  2008     Fall    11
+## 10     3     1  2009     Fall    13
+## # ... with 26 more rows</code></pre>
+<pre class="r"><code>grades %&gt;%
+   gather(Semester, Score, Fall:Winter) %&gt;%
+   mutate(Test = paste0(&quot;Test&quot;, Test))</code></pre>
+<pre><code>## # A tibble: 36 x 5
+##       ID  Test  Year Semester Score
+##    &lt;int&gt; &lt;chr&gt; &lt;int&gt;    &lt;chr&gt; &lt;int&gt;
+## 1      1 Test1  2008     Fall    15
+## 2      1 Test1  2009     Fall    12
+## 3      1 Test2  2008     Fall    22
+## 4      1 Test2  2009     Fall    10
+## 5      2 Test1  2008     Fall    12
+## 6      2 Test1  2009     Fall    16
+## 7      2 Test2  2008     Fall    13
+## 8      2 Test2  2009     Fall    23
+## 9      3 Test1  2008     Fall    11
+## 10     3 Test1  2009     Fall    13
+## # ... with 26 more rows</code></pre>
+<pre class="r"><code>grades %&gt;%
+   gather(Semester, Score, Fall:Winter) %&gt;%
+   mutate(Test = paste0(&quot;Test&quot;, Test)) %&gt;%
+   spread(Test, Score)</code></pre>
+<pre><code>## # A tibble: 18 x 5
+##       ID  Year Semester Test1 Test2
+## *  &lt;int&gt; &lt;int&gt;    &lt;chr&gt; &lt;int&gt; &lt;int&gt;
+## 1      1  2008     Fall    15    22
+## 2      1  2008   Spring    16    22
+## 3      1  2008   Winter    19    24
+## 4      1  2009     Fall    12    10
+## 5      1  2009   Spring    13    14
+## 6      1  2009   Winter    27    20
+## 7      2  2008     Fall    12    13
+## 8      2  2008   Spring    13    11
+## 9      2  2008   Winter    25    29
+## 10     2  2009     Fall    16    23
+## 11     2  2009   Spring    14    20
+## 12     2  2009   Winter    21    26
+## 13     3  2008     Fall    11    17
+## 14     3  2008   Spring    12    12
+## 15     3  2008   Winter    22    23
+## 16     3  2009     Fall    13    14
+## 17     3  2009   Spring    11     9
+## 18     3  2009   Winter    27    31</code></pre>
+<pre class="r"><code>grades %&gt;%
+   gather(Semester, Score, Fall:Winter) %&gt;%
+   mutate(Test = paste0(&quot;Test&quot;, Test)) %&gt;%
+   spread(Test, Score) %&gt;%
+   arrange(ID, Year, Semester)</code></pre>
+<pre><code>## # A tibble: 18 x 5
+##       ID  Year Semester Test1 Test2
+##    &lt;int&gt; &lt;int&gt;    &lt;chr&gt; &lt;int&gt; &lt;int&gt;
+## 1      1  2008     Fall    15    22
+## 2      1  2008   Spring    16    22
+## 3      1  2008   Winter    19    24
+## 4      1  2009     Fall    12    10
+## 5      1  2009   Spring    13    14
+## 6      1  2009   Winter    27    20
+## 7      2  2008     Fall    12    13
+## 8      2  2008   Spring    13    11
+## 9      2  2008   Winter    25    29
+## 10     2  2009     Fall    16    23
+## 11     2  2009   Spring    14    20
+## 12     2  2009   Winter    21    26
+## 13     3  2008     Fall    11    17
+## 14     3  2008   Spring    12    12
+## 15     3  2008   Winter    22    23
+## 16     3  2009     Fall    13    14
+## 17     3  2009   Spring    11     9
+## 18     3  2009   Winter    27    31</code></pre>
 </div>
 
 <p>I don't have a copyright :( &copy; 2016 :( All rights reserved?</p>
