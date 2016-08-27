@@ -75,6 +75,6 @@ ggplot(data=line.graph.data.typed, aes(x=factor(month_year, labels = unique(form
     geom_line() +
     geom_point() +
     labs(y = "Visits", x = "Month") + 
-    ggtitle("This is what I actually do all day")
+    ggtitle("This is what I do all day")
 ```
 
