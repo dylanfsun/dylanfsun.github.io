@@ -3,4 +3,4 @@ title: "Welcome to my website I guess"
 output: html_document
 ---
 
-![My life](browser_history_graph_files/figure-html/typed_browser_history_line_graph-1.png)
+Test home please ignore

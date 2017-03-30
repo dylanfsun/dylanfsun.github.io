@@ -5,14 +5,10 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Stories"
-      href: browser_history_graph.html
-    - text: "Reading"
-      href: intro_to_stat_learning.html
-    - text: "Test"
-      href: test_interactive_plots.html
     - text: "About"
       href: about.html
+    - text: "Project 4"
+      href: biostat699project4.html
   right:
     - text: "Code Repository"
       href: https://github.com/dylanfsun/dylanfsun.github.io
