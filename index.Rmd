@@ -1,6 +1,6 @@
 ---
-title: "Welcome to my website I guess"
+title: "Test website"
 output: html_document
 ---
 
-Test home please ignore
+Test home

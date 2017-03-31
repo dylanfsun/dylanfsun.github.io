@@ -7,8 +7,6 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
-    - text: "Project 4"
-      href: biostat699project4.html
   right:
     - text: "Code Repository"
       href: https://github.com/dylanfsun/dylanfsun.github.io
